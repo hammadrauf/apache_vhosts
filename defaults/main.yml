@@ -1,2 +1,120 @@
 ---
 # Role default lower priority variables
+
+# List of dicts with the virtual hosts to configure. The dicts have the
+# following format:
+#
+# {
+#  server_name: <name>            # The server name of the virtual host
+#  directory: <path>              # Path to the diretory where to save virtual
+#                                 # host config file
+#  file: <name>                   # Name of the file fot the virtual host config
+#  owner: <user>                  # Owner of the dir/file for vhost config.
+#  group: <group>                 # Group of the dir/file for vhost config.
+#  dir_mode: <mode>               # Permissions for the vhost config directory
+#  file_mode: <mode>              # Permissions for the vhost config file
+#  template: <template>           # The template to use. See below for details
+#  addr: <address>                # Virtual host address (can be *)
+#  port: <port>                   # Port of the virtual host
+#  includes: <list>               # List of strings with the extra files paths
+#                                 # to include
+#  rewrite_engine: <yes_no>       # Enable or not rewrite engine
+#  rewrite_rules: <list>          # List of strings with rewrite rules to setup
+#  proxy_preserve_host: <yes_no>  # Preserver or not proxy host
+#  proxy_pass: <list>             # List of strings with the proxy pass sentences
+#                                 # to setup
+#  headers: <list>                # List of strings with headers sentences to
+#                                 # setup
+#  balancer:                      # Dict with the balancer settings
+#    name: <name>                 # Name of the balancer
+#    members: <list>              # Balancer members URIs
+#    lbmethod: <method>           # Balancer method to use
+#    sticky_session: <sticky>     # Sticky session to use
+#
+#  error_log: <path>              # Path to the error log file
+#  post_script: <path>            # Path to a script to run after config
+#  post_script_become: <yes_no>   # Become another user to run post script
+#  post_script_become_user: <u>   # User to run post script
+#  post_script_become_method: <m> # Metho to become. Default is sudo.
+# }
+#
+# Available templates:
+#
+# Currentl there are the following templates available:
+#
+# - redirect_to_ssl: redirects all the requests to https.
+#
+# - standard: configures a virtual host with the following sections (in order):
+#   includes, rewrite rules, proxy pass, headers, balancer and log settings.
+#
+# Example:
+#
+# apache_vhosts:
+#   - server_name: example.domain.local
+#     file: myhost.conf
+#     template: redirect_to_ssl
+#     port: 80
+#
+#   - server_name: example.domain.local
+#     file: myhost_ssl.conf
+#     template: standard
+#     port: 443
+#     includes:
+#       - /etc/httpd/ssl.conf
+#     rewrite_rules:
+#       - "^/$ /app [R]"
+#     proxy_pass:
+#       - /app balancer://{{ apache_vhosts_vhost_defaults.balancer.name }}/app
+#     headers:
+#       - >-
+#         add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/app"
+#         env=BALANCER_ROUTE_CHANGED
+
+apache_vhosts: []
+
+# Dicitionary with the defaults options to use if no other ones are specified in
+# the `apache_vhosts` variable. The members of the dict are the same attributes
+# of this variable.
+#
+# Example:
+#
+#
+# apache_vhosts_vhost_defaults:
+#   directory: /etc/httpd/ansible_vhost.d
+#   owner: apache
+#   group: apache
+#   dir_mode: "0755"
+#   file_mode: "0640"
+#   addr: "*"
+#   proxy_preserve_host: yes
+#   rewrite_engine: yes
+#   balancer:
+#     name: tomcat-cluster
+#     members:
+#       - ajp://backend1.domain.local:8080 route=backend1-jvm
+#       - ajp://backend2.domain.local:8080 route=backend2-jvm
+#     lbmethod: byrequests
+#     sticky_session: ROUTEID
+#   error_log: /var/log/apache/my_error_log
+#   post_script: "service httpd restart"
+#   post_script_become: yes
+#   post_script_become_user: root
+#   post_script_become_method: sudo
+
+apache_vhosts_vhost_defaults:
+  directory: /etc/httpd/ansible_vhost.d
+  owner: apache
+  group: apache
+  dir_mode: "0755"
+  file_mode: "0640"
+  addr: "*"
+  proxy_preserve_host: yes
+  rewrite_engine: yes
+
+# Indicate `apache_vhosts` must be loaded also from host
+# variables. Any host variable that begins with "apache_vhosts_vhost_*"
+# and contains the necessary attributes will be loaded as an item to manage by
+# the role. The variables must follow the structure detailed before for
+# `apache_vhosts`
+
+apache_vhosts_load_modules_from_hostvars: no

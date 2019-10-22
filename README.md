@@ -1,66 +1,12 @@
-# Ansible <!-- this role name --> role
+# Ansible apache_vhosts role
 
-This is an [Ansible](http://www.ansible.com) role which <!-- brief description of the role goes here -->.
-
-## Requirements
-
-<!-- Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required. For example: -->
-
-[Ansible 2.7+](http://docs.ansible.com/ansible/latest/intro_installation.html)
+This is an [Ansible](http://www.ansible.com) role to configure apache server virtual hosts.
 
 ## Role Variables
 
-<!-- A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well. For example: -->
-
 A list of all the default variables for this role is available in `defaults/main.yml`.
 
-The role also setups the following facts:
-
-- `thisrole_fact1`: description of the fact
-- `thisrole_fact2`: description of the fact
-- `thisrole_factN`: description of the fact
-
-## Filters
-
-<!-- A description of the filters provided by the role should go here. For example: -->
-
-The role provides these filters:
-
-- `thisrole_filter1`: description of the filter
-- `thisrole_filter2`: description of the filter
-- `thisrole_filterN`: description of the filter
-
-## Modules
-
-<!-- A description of the modules provided by the role should go here. For example: -->
-
-The role provides these modules:
-
-- `thisrole_module1`: description of the module
-- `thisrole_module2`: description of the module
-- `thisrole_moduleN`: description of the module
-
-## Tests
-
-<!-- A description of the tests provided by the role should go here. For example: -->
-
-The role provides these tests:
-
-- `thisrole_test1`: description of the test
-- `thisrole_test2`: description of the test
-- `thisrole_testN`: description of the test
-
-## Dependencies
-
-<!-- A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles. For example: -->
-
-- [amtega.check_platform](https://galaxy.ansible.com/amtega/check_platform)
-- [amtega.proxy_client](https://galaxy.ansible.com/amtega/proxy_client)
-- [amtega.packages](https://galaxy.ansible.com/amtega/packages)
-
-## Usage
-
-<!-- Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too. For example: -->
+## Example Playbook
 
 This is an example playbook:
 
@@ -69,28 +15,65 @@ This is an example playbook:
 
 - hosts: all
   roles:
-    - role: thisrole
-      thisrole_var1: value1
-      thisrole_var2: value2
-      thisrole_varN: valuen
+    - role: amtega.apache_vhosts
+    - role: amtega.apache_vhosts
+      vars:
+        apache_vhosts:
+          - server_name: example.domain.local
+            file: myhost.conf
+            template: redirect_to_ssl
+            port: 80
+
+          - server_name: example.domain.local
+            file: myhost_ssl.conf
+            template: standard
+            port: 443
+            includes:
+              - /etc/httpd/ssl.conf
+            rewrite_rules:
+              - "^/$ /myapp [R]"
+            proxy_pass:
+              - /myapp balancer://{{ apache_vhosts_vhost_defaults.balancer.name }}/myapp
+            headers:
+              - add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/myapp" env=BALANCER_ROUTE_CHANGED
+
+        apache_vhosts_vhost_defaults:
+          directory: /etc/httpd/conf.ansible.d
+          owner: apache
+          group: apache
+          dir_mode: "0755"
+          file_mode: "0640"
+          addr: "*"
+          proxy_preserve_host: yes
+          rewrite_engine: yes
+          balancer:
+            name: tomcat-cluster
+            members:
+              - ajp://backend1.domain.local:8080 route=backend1-jvm
+              - ajp://backend2.domain.local:8080 route=backend2-jvm
+            lbmethod: byrequests
+            sticky_session: ROUTEID
+          error_log: /var/log/apache/my_error_log
+          post_script: "service httpd restart"
+          post_script_become: yes
+          post_script_become_user: root
+          post_script_become_method: sudo    
 ```
 
 ## Testing
-
-<!-- A description of how to run tests of the role if available. For example: -->
 
 Tests are based on docker containers. You can setup docker engine quickly using the playbook `files/setup.yml` available in the role [amtega.docker_engine](https://galaxy.ansible.com/amtega/docker_engine).
 
 Once you have docker, you can run the tests with the following commands:
 
 ```shell
-$ cd thisrole/tests
+$ cd amtega.apache_vhosts/test
 $ ansible-playbook main.yml
 ```
 
 ## License
 
-Copyright (C) <!-- YEAR --> AMTEGA - Xunta de Galicia
+Copyright (C) 2019 AMTEGA - Xunta de Galicia
 
 This role is free software: you can redistribute it and/or modify it under the terms of:
 
@@ -100,6 +83,5 @@ This role is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 
 ## Author Information
 
-- <!-- author _name 1 -->.
-- <!-- author _name 2 -->.
-- <!-- author _name N -->.
+- José Enrique Mourón Regueira
+- Juan Antonio Valiño García.
