@@ -1,2 +1,108 @@
 ---
 # Tasks for testing role
+
+- name: Configure docker sandbox environment
+  hosts: localhost
+  roles:
+    - role: amtega.docker_presets
+      docker_presets_images_json_query: >-
+        [? starts_with(name, `centos-6`)
+           || starts_with(name, `centos-7`)
+           || starts_with(name, `fedora-29`)
+           || starts_with(name, `fedora-30`) ]
+  tags:
+    - sandbox
+
+- name: Run idempotence test
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: started
+  tags:
+    - sandbox
+
+- name: Test apache_vhosts role
+  hosts: docker_sandbox_containers
+  pre_tasks:
+    - name: Install required packages
+      package:
+        name:
+          - httpd
+          - initscripts
+        state: present
+  roles:
+      - role: amtega.apache_vhosts
+        vars:
+          apache_vhosts:
+            - server_name: example.domain.local
+              file: myhost.conf
+              template: redirect_to_ssl
+              port: 80
+
+            - server_name: example.domain.local
+              file: myhost_ssl.conf
+              template: standard
+              port: 443
+              includes:
+                - /etc/httpd/ssl.conf
+              rewrite_rules:
+                - "^/$ /myapp [R]"
+              proxy_pass:
+                - /myapp balancer://{{ apache_vhosts_vhost_defaults.balancer.name }}/myapp
+              headers:
+                - add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/myapp" env=BALANCER_ROUTE_CHANGED
+
+          apache_vhosts_vhost_defaults:
+            directory: /etc/httpd/conf.ansible.d
+            owner: apache
+            group: apache
+            dir_mode: "0755"
+            file_mode: "0640"
+            addr: "*"
+            proxy_preserve_host: yes
+            rewrite_engine: yes
+            balancer:
+              name: tomcat-cluster
+              members:
+                - ajp://backend1.domain.local:8080 route=backend1-jvm
+                - ajp://backend2.domain.local:8080 route=backend2-jvm
+              lbmethod: byrequests
+              sticky_session: ROUTEID
+            error_log: /var/log/apache/my_error_log
+            post_script: "service httpd restart"
+            post_script_become: yes
+            post_script_become_user: root
+            post_script_become_method: sudo
+  tasks:
+    - name: Check virtual hosts config files
+      stat:
+        path: "{{ item }}"
+      loop:
+        - >-
+          {{ apache_vhosts_vhost_defaults.directory
+             + "/"
+             + apache_vhosts.0.file }}
+        - >-
+          {{ apache_vhosts_vhost_defaults.directory
+             + "/"
+             + apache_vhosts.1.file }}
+      register: check_config_files_result
+
+    - name: Verify that virtual hosts config files exist
+      assert:
+        that: >-
+          {{ check_config_files_result.results
+             | selectattr("stat.exists", "equalto", false)
+             | list
+             | length == 0 }}
+  tags:
+    - idempotence
+
+- name: Cleanup docker sandbox
+  hosts: localhost
+  roles:
+    - role: amtega.docker_sandbox
+      docker_sandbox_state: absent
+  tags:
+    - cleanup
+    - sandbox
