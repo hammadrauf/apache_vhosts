@@ -13,7 +13,8 @@
     name: amtega.select_hostvars
   vars:
     select_hostvars_query:
-      pattern: "^apache_vhosts_vhost_.*"
+      pattern: "^apache_vhosts_.*"
+      exclude_pattern: "^apache_vhosts_defaults$"
       fact_name: apache_vhosts_hostvars
       output_type: list
   when: apache_vhosts_load_modules_from_hostvars | bool
@@ -23,51 +24,51 @@
       file:
         path: >-
           {{ apache_vhosts_vhost.directory
-             | default(apache_vhosts_vhost_defaults.directory) }}
+             | default(apache_vhosts_defaults.directory) }}
         owner: >-
           {{ apache_vhosts_vhost.owner
-             | default(apache_vhosts_vhost_defaults.owner) }}
+             | default(apache_vhosts_defaults.owner) }}
         group: >-
           {{ apache_vhosts_vhost.owner
-             | default(apache_vhosts_vhost_defaults.owner) }}
+             | default(apache_vhosts_defaults.owner) }}
         mode: >-
           {{ apache_vhosts_vhost.mode
-             | default(apache_vhosts_vhost_defaults.dir_mode) }}
+             | default(apache_vhosts_defaults.dir_mode) }}
         state: directory
       loop: "{{ apache_vhosts_to_manage }}"
       loop_control:
         loop_var: apache_vhosts_vhost
         label: >-
           {{ apache_vhosts_vhost.directory
-             | default(apache_vhosts_vhost_defaults.directory) }}
+             | default(apache_vhosts_defaults.directory) }}
 
     - name: Setup virtual host config file
       template:
         src: "vhost_{{ apache_vhosts_vhost.template }}.conf.j2"
         dest: >-
           {{ apache_vhosts_vhost.directory
-             | default(apache_vhosts_vhost_defaults.directory)
+             | default(apache_vhosts_defaults.directory)
              + "/"
              + apache_vhosts_vhost.file
-               | default(apache_vhosts_vhost_defaults.file) }}
+               | default(apache_vhosts_defaults.file) }}
         owner: >-
           {{ apache_vhosts_vhost.owner
-             | default(apache_vhosts_vhost_defaults.owner) }}
+             | default(apache_vhosts_defaults.owner) }}
         group: >-
           {{ apache_vhosts_vhost.owner
-             | default(apache_vhosts_vhost_defaults.owner) }}
+             | default(apache_vhosts_defaults.owner) }}
         mode: >-
           {{ apache_vhosts_vhost.file_mode
-             | default(apache_vhosts_vhost_defaults.file_mode) }}
+             | default(apache_vhosts_defaults.file_mode) }}
       loop: "{{ apache_vhosts_to_manage }}"
       loop_control:
         loop_var: apache_vhosts_vhost
         label: >-
           {{ apache_vhosts_vhost.directory
-             | default(apache_vhosts_vhost_defaults.directory)
+             | default(apache_vhosts_defaults.directory)
              + "/"
              + apache_vhosts_vhost.file
-               | default(apache_vhosts_vhost_defaults.file) }}
+               | default(apache_vhosts_defaults.file) }}
       notify: run post script
 
   tags:

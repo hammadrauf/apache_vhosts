@@ -33,11 +33,14 @@ This is an example playbook:
             rewrite_rules:
               - "^/$ /myapp [R]"
             proxy_pass:
-              - /myapp balancer://{{ apache_vhosts_vhost_defaults.balancer.name }}/myapp
+              - >-
+                /myapp balancer://tomcat-cluster/myapp
             headers:
-              - add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/myapp" env=BALANCER_ROUTE_CHANGED
+              - >-
+                add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/myapp"
+                env=BALANCER_ROUTE_CHANGED
 
-        apache_vhosts_vhost_defaults:
+        apache_vhosts_defaults:
           directory: /etc/httpd/conf.ansible.d
           owner: apache
           group: apache

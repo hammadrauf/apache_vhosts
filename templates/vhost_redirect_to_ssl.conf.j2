@@ -1,7 +1,7 @@
 {{ ansible_managed | comment }}
 
-<VirtualHost {{ apache_vhosts_vhost.addr | default(apache_vhosts_vhost_defaults.addr) }}:{{ apache_vhosts_vhost.port | default(apache_vhosts_vhost_defaults.port) }}>
-  ServerName {{ apache_vhosts_vhost.server_name | default(apache_vhosts_vhost_defaults.server_name) }}
-  ProxyPreserveHost {{ (apache_vhosts_vhost.proxy_preserve_host | default(apache_vhosts_vhost_defaults.proxy_preserve_host)) | ternary("On", "Off") }}
-  RedirectMatch  ^/(.*) https://{{ apache_vhosts_vhost.server_name | default(apache_vhosts_vhost_defaults.server_name) }}/$1
+<VirtualHost {{ apache_vhosts_vhost.addr | default(apache_vhosts_defaults.addr) }}:{{ apache_vhosts_vhost.port | default(apache_vhosts_defaults.port) }}>
+  ServerName {{ apache_vhosts_vhost.server_name | default(apache_vhosts_defaults.server_name) }}
+  ProxyPreserveHost {{ (apache_vhosts_vhost.proxy_preserve_host | default(apache_vhosts_defaults.proxy_preserve_host)) | ternary("On", "Off") }}
+  RedirectMatch  ^/(.*) https://{{ apache_vhosts_vhost.server_name | default(apache_vhosts_defaults.server_name) }}/$1
 </VirtualHost>
