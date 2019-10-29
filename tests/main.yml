@@ -48,11 +48,11 @@
               rewrite_rules:
                 - "^/$ /myapp [R]"
               proxy_pass:
-                - /myapp balancer://{{ apache_vhosts_vhost_defaults.balancer.name }}/myapp
+                - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
               headers:
                 - add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/myapp" env=BALANCER_ROUTE_CHANGED
 
-          apache_vhosts_vhost_defaults:
+          apache_vhosts_defaults:
             directory: /etc/httpd/conf.ansible.d
             owner: apache
             group: apache
@@ -79,11 +79,11 @@
         path: "{{ item }}"
       loop:
         - >-
-          {{ apache_vhosts_vhost_defaults.directory
+          {{ apache_vhosts_defaults.directory
              + "/"
              + apache_vhosts.0.file }}
         - >-
-          {{ apache_vhosts_vhost_defaults.directory
+          {{ apache_vhosts_defaults.directory
              + "/"
              + apache_vhosts.1.file }}
       register: check_config_files_result

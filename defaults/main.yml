@@ -5,37 +5,40 @@
 # following format:
 #
 # {
-#  server_name: <name>            # The server name of the virtual host
-#  directory: <path>              # Path to the diretory where to save virtual
-#                                 # host config file
-#  file: <name>                   # Name of the file fot the virtual host config
-#  owner: <user>                  # Owner of the dir/file for vhost config.
-#  group: <group>                 # Group of the dir/file for vhost config.
-#  dir_mode: <mode>               # Permissions for the vhost config directory
-#  file_mode: <mode>              # Permissions for the vhost config file
-#  template: <template>           # The template to use. See below for details
-#  addr: <address>                # Virtual host address (can be *)
-#  port: <port>                   # Port of the virtual host
-#  includes: <list>               # List of strings with the extra files paths
-#                                 # to include
-#  rewrite_engine: <yes_no>       # Enable or not rewrite engine
-#  rewrite_rules: <list>          # List of strings with rewrite rules to setup
-#  proxy_preserve_host: <yes_no>  # Preserver or not proxy host
-#  proxy_pass: <list>             # List of strings with the proxy pass sentences
-#                                 # to setup
-#  headers: <list>                # List of strings with headers sentences to
-#                                 # setup
-#  balancer:                      # Dict with the balancer settings
-#    name: <name>                 # Name of the balancer
-#    members: <list>              # Balancer members URIs
-#    lbmethod: <method>           # Balancer method to use
-#    sticky_session: <sticky>     # Sticky session to use
+#  server_name: <name>               # The server name of the virtual host
+#  directory: <path>                 # Path to the diretory where to save
+#                                    # virtual host config file
+#  file: <name>                      # Name of the file fot the vhostconfig
+#  owner: <user>                     # Owner of the dir/file for vhost config.
+#  group: <group>                    # Group of the dir/file for vhost config.
+#  dir_mode: <mode>                  # Permissions for the vhost config dir
+#  file_mode: <mode>                 # Permissions for the vhost config file
+#  template: <template>              # Template to use. See below for details
+#  addr: <address>                   # Virtual host address (can be *)
+#  port: <port>                      # Port of the virtual host
+#  includes: <list>                  # List of strings with the extra files
+#                                    # paths to include
+#  rewrite_engine: <yes_no>          # Enable or not rewrite engine
+#  rewrite_rules: <list>             # List of strings with rewrite rules
+#  proxy_preserve_host: <yes_no>     # Preserver or not proxy host
+#  proxy_pass: <list>                # List of strings with the proxy pass
+#                                    # sentences to setup
+#  headers: <list>                   # List of strings with headers sentences to
+#                                    # setup
+#  balancer:                         # Dict with the balancer settings
+#    name: <name>                    # Name of the balancer
+#    members: <list>                 # Balancer members URIs
+#    lbmethod: <method>              # Balancer method to use
+#    sticky_session: <sticky>        # Sticky session to use
 #
-#  error_log: <path>              # Path to the error log file
-#  post_script: <path>            # Path to a script to run after config
-#  post_script_become: <yes_no>   # Become another user to run post script
-#  post_script_become_user: <u>   # User to run post script
-#  post_script_become_method: <m> # Metho to become. Default is sudo.
+#  error_log: <path>                 # Path to the error log file
+#  post_script: <path>               # Path to a script to run after config
+#  post_script_become: <yes_no>      # Become another user to run post script
+#  post_script_become_user: <u>      # User to run post script
+#  post_script_become_method: <m>    # Method to become. Default is sudo.
+#  post_script_expect_responses: <r> # Mapping with expect responses to respond
+#                                    # the post script. See ansible expect
+#                                    # module documentation for details
 # }
 #
 # Available templates:
@@ -64,7 +67,7 @@
 #     rewrite_rules:
 #       - "^/$ /app [R]"
 #     proxy_pass:
-#       - /app balancer://{{ apache_vhosts_vhost_defaults.balancer.name }}/app
+#       - /app balancer://{{ apache_vhosts_defaults.balancer.name }}/app
 #     headers:
 #       - >-
 #         add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e; path=/app"
@@ -79,7 +82,7 @@ apache_vhosts: []
 # Example:
 #
 #
-# apache_vhosts_vhost_defaults:
+# apache_vhosts_defaults:
 #   directory: /etc/httpd/ansible_vhost.d
 #   owner: apache
 #   group: apache
@@ -101,7 +104,7 @@ apache_vhosts: []
 #   post_script_become_user: root
 #   post_script_become_method: sudo
 
-apache_vhosts_vhost_defaults:
+apache_vhosts_defaults:
   directory: /etc/httpd/ansible_vhost.d
   owner: apache
   group: apache
@@ -112,9 +115,13 @@ apache_vhosts_vhost_defaults:
   rewrite_engine: yes
 
 # Indicate `apache_vhosts` must be loaded also from host
-# variables. Any host variable that begins with "apache_vhosts_vhost_*"
+# variables. Any host variable that begins with "apache_vhosts_*"
 # and contains the necessary attributes will be loaded as an item to manage by
 # the role. The variables must follow the structure detailed before for
 # `apache_vhosts`
 
 apache_vhosts_load_modules_from_hostvars: no
+
+# Hide sensitive information
+
+apache_vhosts_no_log: yes
