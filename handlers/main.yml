@@ -2,7 +2,7 @@
 # Role handlers
 
 - name: Apache_vhosts run post script
-  shell: "{{ apache_vhosts_post_script }}"
+  command: "{{ apache_vhosts_post_script }}"
   args:
     warn: no
   become: >-
@@ -33,7 +33,7 @@
          | default(apache_vhosts_defaults.post_script)
          | default("") }}
 
-- name: Apache_vhosts run post script
+- name: Apache_vhosts run post script with expect
   expect:
     command: "{{ apache_vhosts_post_script }}"
     responses: >-
