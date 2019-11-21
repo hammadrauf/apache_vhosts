@@ -10,6 +10,14 @@
       rhel: 6
 
 - include_role:
+    name: amtega.packages
+  vars:
+    packages_python:
+      all:
+        all:
+          pexpect: latest
+
+- include_role:
     name: amtega.select_hostvars
   vars:
     select_hostvars_query:
@@ -35,7 +43,7 @@
           {{ apache_vhosts_vhost.mode
              | default(apache_vhosts_defaults.dir_mode) }}
         state: directory
-      loop: "{{ apache_vhosts_to_manage }}"
+      loop: "{{ apache_vhosts_to_setup }}"
       loop_control:
         loop_var: apache_vhosts_vhost
         label: >-
@@ -45,12 +53,7 @@
     - name: Setup virtual host config file
       template:
         src: "vhost_{{ apache_vhosts_vhost.template }}.conf.j2"
-        dest: >-
-          {{ apache_vhosts_vhost.directory
-             | default(apache_vhosts_defaults.directory)
-             + "/"
-             + apache_vhosts_vhost.file
-               | default(apache_vhosts_defaults.file) }}
+        dest: "{{ apache_vhost_vhost_path }}"
         owner: >-
           {{ apache_vhosts_vhost.owner
              | default(apache_vhosts_defaults.owner) }}
@@ -60,7 +63,7 @@
         mode: >-
           {{ apache_vhosts_vhost.file_mode
              | default(apache_vhosts_defaults.file_mode) }}
-      loop: "{{ apache_vhosts_to_manage }}"
+      loop: "{{ apache_vhosts_to_setup }}"
       loop_control:
         loop_var: apache_vhosts_vhost
         label: >-
@@ -70,6 +73,60 @@
              + apache_vhosts_vhost.file
                | default(apache_vhosts_defaults.file) }}
       notify: run post script
+
+    - name: Remove virtual host config file
+      file:
+        path: "{{ apache_vhost_vhost_path }}"
+        state: absent
+      loop: "{{ apache_vhosts_to_remove }}"
+      loop_control:
+        loop_var: apache_vhosts_vhost
+        label: >-
+          {{ apache_vhosts_vhost.directory
+             | default(apache_vhosts_defaults.directory)
+             + "/"
+             + apache_vhosts_vhost.file
+               | default(apache_vhosts_defaults.file) }}
+      notify: run post script
+  vars:
+    apache_vhosts_state_defined: >-
+      {{ apache_vhosts_to_manage | selectattr("state", "defined") | list }}
+
+    apache_vhosts_state_undefined: >-
+      {{ apache_vhosts_to_manage | selectattr("state", "undefined") | list }}
+
+    apache_vhosts_state_default_present: >-
+      {{ (apache_vhosts_defaults.state is defined
+          and apache_vhosts_defaults.state == "present")
+          | ternary(apache_vhosts_state_undefined, []) }}
+
+    apache_vhosts_state_default_absent: >-
+      {{ (apache_vhosts_defaults.state is defined
+          and apache_vhosts_defaults.state == "absent")
+          | ternary(apache_vhosts_state_undefined, []) }}
+
+    apache_vhosts_state_explict_present: >-
+      {{ apache_vhosts_state_defined
+         | selectattr("state", "equalto", "present") | list }}
+
+    apache_vhosts_state_explict_absent: >-
+      {{ apache_vhosts_state_defined
+         | selectattr("state", "equalto", "absent") | list }}
+
+    apache_vhosts_to_setup: >-
+      {{ apache_vhosts_state_default_present
+         + apache_vhosts_state_explict_present }}
+
+    apache_vhosts_to_remove: >-
+      {{ apache_vhosts_state_default_absent
+         + apache_vhosts_state_explict_absent }}
+
+    apache_vhost_vhost_path: >-
+      {{ apache_vhosts_vhost.directory
+         | default(apache_vhosts_defaults.directory)
+         + "/"
+         + apache_vhosts_vhost.file
+           | default(apache_vhosts_defaults.file) }}
 
   tags:
     - role::apache_vhosts

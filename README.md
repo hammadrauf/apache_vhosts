@@ -60,7 +60,8 @@ This is an example playbook:
           post_script: "service httpd restart"
           post_script_become: yes
           post_script_become_user: root
-          post_script_become_method: sudo    
+          post_script_become_method: sudo
+          state: present
 ```
 
 ## Testing
