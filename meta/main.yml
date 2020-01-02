@@ -25,6 +25,7 @@ dependencies:
   - role: amtega.check_platform
     tags:
       - never
+
   - role: amtega.select_hostvars
     tags:
       - never
