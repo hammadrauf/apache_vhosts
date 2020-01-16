@@ -23,9 +23,24 @@ galaxy_info:
 
 dependencies:
   - role: amtega.check_platform
-    tags:
-      - never
+    vars:
+      check_platform_distributions:
+        centos: 6
+        fedora: 27
+        rhel: 6
+
+  - role: amtega.packages
+    vars:
+      packages_python:
+        all:
+          all:
+            pexpect: latest
 
   - role: amtega.select_hostvars
-    tags:
-      - never
+    vars:
+      select_hostvars_query:
+        pattern: "^apache_vhosts_.*"
+        exclude_pattern: "^apache_vhosts_defaults$"
+        fact_name: apache_vhosts_hostvars
+        output_type: list
+    when: apache_vhosts_load_modules_from_hostvars | bool

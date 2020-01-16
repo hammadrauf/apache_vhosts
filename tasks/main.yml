@@ -1,32 +1,6 @@
 ---
 # Role tasks
 
-- include_role:
-    name: amtega.check_platform
-  vars:
-    check_platform_distributions:
-      centos: 6
-      fedora: 27
-      rhel: 6
-
-- include_role:
-    name: amtega.packages
-  vars:
-    packages_python:
-      all:
-        all:
-          pexpect: latest
-
-- include_role:
-    name: amtega.select_hostvars
-  vars:
-    select_hostvars_query:
-      pattern: "^apache_vhosts_.*"
-      exclude_pattern: "^apache_vhosts_defaults$"
-      fact_name: apache_vhosts_hostvars
-      output_type: list
-  when: apache_vhosts_load_modules_from_hostvars | bool
-
 - block:
     - name: Ensure virtual hosts config directories exists
       file:
