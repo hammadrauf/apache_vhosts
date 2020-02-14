@@ -19,10 +19,17 @@
 #  port: <port>                       # Port of the virtual host
 #  includes: <list>                   # List of strings with the extra files
 #                                     # paths to include
+#  raw_content: <string>              # Raw content to include
 #  rewrite_engine: <yes_no>           # Enable or not rewrite engine
 #  rewrite_rules: <list>              # List of strings with rewrite rules
+#  locations:                         # List of dicts with the locations settings
+#    path: <path>                     # Path of the location
+#    proxy_pass: <list>               # See proxy_pass attribute below
+#    proxy_pass_reverse: <list>       # See proxy_pass_reverse attribute below
 #  proxy_preserve_host: <yes_no>      # Preserver or not proxy host
 #  proxy_pass: <list>                 # List of strings with the proxy pass
+#                                     # sentences to setup
+#  proxy_pass_reverse: <list>         # List of strings with the proxy pass
 #                                     # sentences to setup
 #  headers: <list>                    # List of strings with headers sentences
 #                                     # to setup
