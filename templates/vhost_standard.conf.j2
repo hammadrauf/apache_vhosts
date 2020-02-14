@@ -7,6 +7,10 @@
   Include {{ include }}
 {% endfor %}
 
+{% if apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) is defined %}
+  {{ apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) | indent(width=2) }}
+{% endif %}
+
 {% for rule in apache_vhosts_vhost.redirect_match | default(apache_vhosts_defaults.redirect_match) | default([]) %}
   RedirectMatch {{ rule }}
 {% endfor %}
@@ -29,6 +33,10 @@
 
 {% for proxy_pass in apache_vhosts_vhost.proxy_pass | default(apache_vhosts_defaults.proxy_pass) | default([]) %}
   ProxyPass {{ proxy_pass }}
+{% endfor %}
+
+{% for proxy_pass_reverse in apache_vhosts_vhost.proxy_pass_reverse | default(apache_vhosts_defaults.proxy_pass_reverse) | default([]) %}
+  ProxyPassReverse {{ proxy_pass_reverse }}
 {% endfor %}
 
 {% for header in apache_vhosts_vhost.headers | default(apache_vhosts_defaults.headers) | default([]) %}

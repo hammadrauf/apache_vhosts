@@ -47,7 +47,15 @@
                 - /etc/httpd/ssl.conf
               rewrite_rules:
                 - "^/$ /myapp [R]"
+              locations:
+                path: test
+                proxy_pass:
+                  - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
+                proxy_pass_reverse:
+                  - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
               proxy_pass:
+                - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
+              proxy_pass_reverse:
                 - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
               headers:
                 - >-
@@ -124,7 +132,15 @@
                 - /etc/httpd/ssl.conf
               rewrite_rules:
                 - "^/$ /myapp [R]"
+              locations:
+                path: test
+                proxy_pass:
+                  - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
+                proxy_pass_reverse:
+                  - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
               proxy_pass:
+                - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
+              proxy_pass_reverse:
                 - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
               headers:
                 - >-
