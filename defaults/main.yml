@@ -50,6 +50,7 @@
 #  post_script_expect_responses: <r>  # Mapping with expect responses to respond
 #                                     # the post script. See ansible expect
 #                                     # module documentation for details
+#  post_script_expect_timeout: <t>    # Timeout for the expect post script
 # }
 #
 # Available templates:
