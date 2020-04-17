@@ -40,6 +40,10 @@
     responses: >-
       {{ apache_vhosts_vhost.post_script_expect_responses
          | default(apache_vhosts_defaults.post_script_expect_responses) }}
+    timeout: >-
+      {{ apache_vhosts_vhost.post_script_expect_timeout
+         | default(apache_vhosts_defaults.post_script_expect_timeout)
+         | default(60) }}
   loop: "{{ apache_vhosts_to_manage }}"
   loop_control:
     loop_var: apache_vhosts_vhost
