@@ -20,6 +20,8 @@
 #  includes: <list>                   # List of strings with the extra files
 #                                     # paths to include
 #  raw_content: <string>              # Raw content to include
+#  timeout: <time>                    # Timeout
+#  redirect_match: <list>             # List of strings with redirect rules
 #  rewrite_engine: <yes_no>           # Enable or not rewrite engine
 #  rewrite_rules: <list>              # List of strings with rewrite rules
 #  locations:                         # List of dicts with the locations settings
@@ -86,7 +88,7 @@
 
 apache_vhosts: []
 
-# Dicitionary with the defaults options to use if no other ones are specified in
+# Dictionary with the defaults options to use if no other ones are specified in
 # the `apache_vhosts` variable. The members of the dict are the same attributes
 # of this variable.
 #

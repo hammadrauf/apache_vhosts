@@ -11,6 +11,10 @@
   {{ apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) | indent(width=2) }}
 {% endif %}
 
+{% if apache_vhosts_vhost.timeout | default(apache_vhosts_defaults.timeout) is defined %}
+  TimeOut {{ apache_vhosts_vhost.timeout | default(apache_vhosts_defaults.timeout) }}
+{% endif %}
+
 {% for rule in apache_vhosts_vhost.redirect_match | default(apache_vhosts_defaults.redirect_match) | default([]) %}
   RedirectMatch {{ rule }}
 {% endfor %}
