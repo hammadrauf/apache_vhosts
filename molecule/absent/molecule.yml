@@ -1,0 +1,103 @@
+---
+
+dependency:
+  name: galaxy
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: centos7
+    image: centos:7
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - molecule_hosts
+  - name: fedora29
+    image: fedora:29
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - molecule_hosts
+      - molecule_hosts_fedora
+  - name: fedora30
+    image: fedora:30
+    command: /sbin/init
+    tmpfs:
+      - /run
+      - /tmp
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    groups:
+      - molecule_hosts
+      - molecule_hosts_fedora
+provisioner:
+  name: ansible
+  inventory:
+    group_vars:
+      molecule_hosts:
+        apache_vhosts_no_log: no
+        apache_vhosts:
+          - server_name: example.domain.local
+            file: myhost.conf
+            template: redirect_to_ssl
+            port: 80
+
+          - server_name: example.domain.local
+            file: myhost_ssl.conf
+            template: standard
+            port: 443
+            includes:
+              - /etc/httpd/ssl.conf
+            rewrite_rules:
+              - "^/$$ /myapp [R]"
+            locations:
+              path: test
+              proxy_pass:
+                - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
+              proxy_pass_reverse:
+                - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
+            proxy_pass:
+              - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
+            proxy_pass_reverse:
+              - /myapp balancer://{{ apache_vhosts_defaults.balancer.name }}/myapp
+            headers:
+              - >-
+                add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e;
+                path=/myapp" env=BALANCER_ROUTE_CHANGED
+
+        apache_vhosts_defaults:
+          directory: /etc/httpd/conf.ansible.d
+          owner: apache
+          group: apache
+          dir_mode: "0755"
+          file_mode: "0640"
+          addr: "*"
+          proxy_preserve_host: yes
+          rewrite_engine: yes
+          balancer:
+            name: tomcat-cluster
+            members:
+              - ajp://backend1.domain.local:8080 route=backend1-jvm
+              - ajp://backend2.domain.local:8080 route=backend2-jvm
+            lbmethod: byrequests
+            sticky_session: ROUTEID
+          error_log: /var/log/apache/my_error_log
+          state: absent
+
+      molecule_hosts_fedora:
+        ansible_python_interpreter: /usr/bin/python3
+  lint:
+    name: ansible-lint
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
