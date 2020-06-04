@@ -1,0 +1,29 @@
+---
+
+- name: Converge
+  hosts: molecule_hosts
+  gather_facts: no
+  roles:
+    - amtega.apache_vhosts
+  tasks:
+    - name: Check virtual hosts config files
+      stat:
+        path: "{{ item }}"
+      loop:
+        - >-
+          {{ apache_vhosts_defaults.directory
+             + "/"
+             + apache_vhosts.0.file }}
+        - >-
+          {{ apache_vhosts_defaults.directory
+             + "/"
+             + apache_vhosts.1.file }}
+      register: check_config_files_result
+
+    - name: Verify that virtual hosts config files exist
+      assert:
+        that: >-
+          {{ check_config_files_result.results
+             | selectattr("stat.exists", "equalto", false)
+             | list
+             | length == 0 }}

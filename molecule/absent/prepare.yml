@@ -1,0 +1,12 @@
+---
+
+- name: Prepare
+  hosts: molecule_hosts
+  gather_facts: no
+  tasks:
+    - name: Remove packages
+      package:
+        name:
+          - httpd
+          - initscripts
+        state: absent

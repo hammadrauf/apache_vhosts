@@ -1,62 +1,110 @@
 {{ ansible_managed | comment }}
 
+{{- "\n\n" -}}
 <VirtualHost {{ apache_vhosts_vhost.addr | default(apache_vhosts_defaults.addr) }}:{{ apache_vhosts_vhost.port | default(apache_vhosts_defaults.port) }}>
   ServerName {{ apache_vhosts_vhost.server_name | default(apache_vhosts_defaults.server_name) }}
 
-{% for include in apache_vhosts_vhost.includes | default(apache_vhosts_defaults.includes) | default([]) %}
-  Include {{ include }}
-{% endfor %}
+{%- set includes = apache_vhosts_vhost.includes | default(apache_vhosts_defaults.includes) | default([]) -%}
+{%- if includes | length > 0 -%}
+  {{- "\n" -}}
+  {%- for include in includes -%}
+    {{- "\n" -}}
+    {{- "  " -}}Include {{ include }}
+  {%- endfor -%}
+{%- endif -%}
 
-{% if apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) is defined %}
-  {{ apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) | indent(width=2) }}
-{% endif %}
+{%- if apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) is defined -%}
+  {{- "\n\n" -}}
+  {{- apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) | indent(width=2, indentfirst=True) -}}
+{%- endif -%}
 
-{% if apache_vhosts_vhost.timeout | default(apache_vhosts_defaults.timeout) is defined %}
-  TimeOut {{ apache_vhosts_vhost.timeout | default(apache_vhosts_defaults.timeout) }}
-{% endif %}
+{%- if apache_vhosts_vhost.timeout | default(apache_vhosts_defaults.timeout) is defined -%}
+  {{- "\n\n" -}}
+  {{- "  " -}}TimeOut {{ apache_vhosts_vhost.timeout | default(apache_vhosts_defaults.timeout) }}
+{%- endif -%}
 
-{% for rule in apache_vhosts_vhost.redirect_match | default(apache_vhosts_defaults.redirect_match) | default([]) %}
-  RedirectMatch {{ rule }}
-{% endfor %}
+{%- set rules = apache_vhosts_vhost.redirect_match | default(apache_vhosts_defaults.redirect_match) | default([]) -%}
+{%- if rules | length > 0 -%}
+  {{- "\n" -}}
+  {%- for rule in rules -%}
+    {{- "\n" -}}
+    {{- "  " -}}RedirectMatch {{ rule }}
+  {%- endfor -%}
+{%- endif -%}
 
-{% if apache_vhosts_vhost.rewrite_engine | default(apache_vhosts_defaults.rewrite_engine) | default(false) %}
-  RewriteEngine On
-{% for rule in apache_vhosts_vhost.rewrite_rules | default(apache_vhosts_defaults.rewrite_rules) | default([]) %}
-  RewriteRule {{ rule }}
-{% endfor %}
-{% endif %}
+{%- if apache_vhosts_vhost.rewrite_engine | default(apache_vhosts_defaults.rewrite_engine) | default(false) -%}
+  {{- "\n\n" -}}
+  {{- "  " -}}RewriteEngine On
+  {%- set rules = apache_vhosts_vhost.rewrite_rules | default(apache_vhosts_defaults.rewrite_rules) | default([]) -%}
+  {%- if rules | length > 0 -%}
+    {%- for rule in rules -%}
+      {{- "\n" -}}
+      {{- "  " -}}RewriteRule {{ rule }}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endif -%}
 
-{% if apache_vhosts_vhost.locations | default(apache_vhosts_defaults.locations) is defined %}
-{% for location in apache_vhosts_vhost.locations | default(apache_vhosts_defaults.locations) %}
-  <Location {{ location.path }}>
-    ProxyPass {{ location.proxy_pass }}
-    ProxyPassReverse {{ location.proxy_pass_reverse }}
-  </Location>
-{% endfor %}
-{% endif %}
+{%- for location in apache_vhosts_vhost.locations | default(apache_vhosts_defaults.locations) | default([]) -%}
+  {{- "\n\n" -}}
+  {{- "  " -}}<Location {{ location.path }}>
+  {%- for proxy in location.proxy_pass | default([]) -%}
+  {{- "\n" -}}
+  {{- "    " -}}ProxyPass {{ proxy }}
+  {%- endfor -%}
+  {%- for proxy in location.proxy_pass_reverse | default([]) -%}
+  {{- "\n" -}}
+  {{- "    " -}}ProxyPassReverse {{ proxy }}
+  {%- endfor -%}
+  {{- "\n" -}}
+  {{- "  " -}}</Location>
+{%- endfor -%}
 
-{% for proxy_pass in apache_vhosts_vhost.proxy_pass | default(apache_vhosts_defaults.proxy_pass) | default([]) %}
-  ProxyPass {{ proxy_pass }}
-{% endfor %}
+{%- set proxies = apache_vhosts_vhost.proxy_pass | default(apache_vhosts_defaults.proxy_pass) | default([]) -%}
+{%- if proxies | length > 0 -%}
+  {{- "\n" -}}
+  {%- for proxy_pass in proxies -%}
+    {{- "\n" -}}
+    {{- "  " -}}ProxyPass {{ proxy_pass }}
+  {%- endfor -%}
+{%- endif -%}
 
-{% for proxy_pass_reverse in apache_vhosts_vhost.proxy_pass_reverse | default(apache_vhosts_defaults.proxy_pass_reverse) | default([]) %}
-  ProxyPassReverse {{ proxy_pass_reverse }}
-{% endfor %}
+{%- set proxies = apache_vhosts_vhost.proxy_pass_reverse | default(apache_vhosts_defaults.proxy_pass_reverse) | default([]) -%}
+{%- if proxies | length > 0 -%}
+  {{- "\n" -}}
+  {%- for proxy_pass_reverse in proxies -%}
+    {{- "\n" -}}
+    {{- "  " -}}ProxyPassReverse {{ proxy_pass_reverse }}
+  {%- endfor -%}
+{%- endif -%}
 
-{% for header in apache_vhosts_vhost.headers | default(apache_vhosts_defaults.headers) | default([]) %}
-  Header {{ header }}
-{% endfor %}
+{%- set headers = apache_vhosts_vhost.headers | default(apache_vhosts_defaults.headers) | default([]) -%}
+{%- if headers | length > 0 -%}
+  {{- "\n" -}}
+  {%- for header in headers -%}
+    {{- "\n" -}}
+    {{- "  " -}}Header {{ header }}
+  {%- endfor -%}
+{%- endif -%}
 
-{% if apache_vhosts_vhost.balancer | default(apache_vhosts_defaults.balancer) is defined %}
-  <Proxy balancer://{{ apache_vhosts_vhost.balancer.name | default(apache_vhosts_defaults.balancer.name) }}>
-{% for member in apache_vhosts_vhost.balancer.members | default(apache_vhosts_defaults.balancer.members) %}
-    BalancerMember {{ member }}
-{% endfor %}
-    ProxySet lbmethod={{ apache_vhosts_vhost.balancer.lbmethod | default(apache_vhosts_defaults.balancer.lbmethod) }} stickysession={{ apache_vhosts_vhost.balancer.sticky_session | default(apache_vhosts_defaults.balancer.sticky_session) }}
- </Proxy>
-{% endif %}
+{%- if apache_vhosts_vhost.balancer | default(apache_vhosts_defaults.balancer) is defined -%}
+  {{- "\n\n" -}}
+  {{- "  " -}}<Proxy balancer://{{ apache_vhosts_vhost.balancer.name | default(apache_vhosts_defaults.balancer.name) }}>
+  {%- set members = apache_vhosts_vhost.balancer.members | default(apache_vhosts_defaults.balancer.members) -%}
+  {%- if members | length > 0 -%}
+    {%- for member in members -%}
+      {{- "\n" -}}
+      {{- "    " -}}BalancerMember {{ member }}
+    {%- endfor -%}
+  {%- endif -%}
+  {{- "\n" -}}
+  {{- "    " -}}ProxySet lbmethod={{ apache_vhosts_vhost.balancer.lbmethod | default(apache_vhosts_defaults.balancer.lbmethod) }} stickysession={{ apache_vhosts_vhost.balancer.sticky_session | default(apache_vhosts_defaults.balancer.sticky_session) }}
+  {{- "\n" -}}
+  {{- "  " -}}</Proxy>
+{%- endif -%}
 
-{% if apache_vhosts_vhost.error_log | default(apache_vhosts_defaults.error_log) is defined %}
-  ErrorLog {{ apache_vhosts_vhost.error_log | default(apache_vhosts_defaults.error_log) }}
-{% endif %}
+{%- if apache_vhosts_vhost.error_log | default(apache_vhosts_defaults.error_log) is defined -%}
+  {{- "\n\n" -}}
+  {{- "  " -}}ErrorLog {{ apache_vhosts_vhost.error_log | default(apache_vhosts_defaults.error_log) }}
+{%- endif -%}
+{{- "\n" -}}
 </VirtualHost>
