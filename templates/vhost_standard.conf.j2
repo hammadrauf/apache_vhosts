@@ -97,7 +97,7 @@
     {%- endfor -%}
   {%- endif -%}
   {{- "\n" -}}
-  {{- "    " -}}ProxySet lbmethod={{ apache_vhosts_vhost.balancer.lbmethod | default(apache_vhosts_defaults.balancer.lbmethod) }} {%- if apache_vhosts_vhost.balancer.sticky_session | default(apache_vhosts_defaults.balancer.sticky_session) is defined -%}stickysession={{ apache_vhosts_vhost.balancer.sticky_session | default(apache_vhosts_defaults.balancer.sticky_session) }}{%- endif -%}
+  {{- "    " -}}ProxySet lbmethod={{ apache_vhosts_vhost.balancer.lbmethod | default(apache_vhosts_defaults.balancer.lbmethod) }}{%- if apache_vhosts_vhost.balancer.sticky_session | default(apache_vhosts_defaults.balancer.sticky_session) is defined -%}{{ " " }}stickysession={{ apache_vhosts_vhost.balancer.sticky_session | default(apache_vhosts_defaults.balancer.sticky_session) }}{%- endif -%}
   {{- "\n" -}}
   {{- "  " -}}</Proxy>
 {%- endif -%}
