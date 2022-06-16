@@ -15,7 +15,7 @@
 
 {%- if apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) is defined -%}
   {{- "\n\n" -}}
-  {{- apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) | indent(width=2, indentfirst=True) -}}
+  {{- apache_vhosts_vhost.raw_content | default(apache_vhosts_defaults.raw_content) | indent(width=2, first=True) -}}
 {%- endif -%}
 
 {%- if apache_vhosts_vhost.timeout | default(apache_vhosts_defaults.timeout) is defined -%}
