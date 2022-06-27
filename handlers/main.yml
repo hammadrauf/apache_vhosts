@@ -1,13 +1,31 @@
 ---
 # Role handlers
 
+- name: Apache_vhosts reload httpd
+  ansible.builtin.service:
+    name: httpd
+    state: reloaded
+  when: >-
+    apache_vhosts_to_manage 
+    | selectattr("reload_httpd", "defined")
+    | selectattr("reload_httpd", "equalto", true)
+    | length > 0
+    or (apache_vhosts_to_manage 
+        | selectattr("reload_httpd", "undefined")
+        | length > 0
+        and apache_vhosts_defaults.reload_httpd | default(false))
+  listen:
+    - apache vhosts reload
+    - httpd vhosts reload
+
 - name: Apache_vhosts run post script
-  command: "{{ apache_vhosts_post_script }}"
+  ansible.builtin.command: "{{ apache_vhosts_post_script }}"
   args:
     warn: no
   become: >-
-    {{ apache_vhosts_vhost.post_script_becomer
-       | default(apache_vhosts_defaults.post_script_become) }}
+    {{ apache_vhosts_vhost.post_script_become
+       | default(apache_vhosts_defaults.post_script_become)
+       | bool }}
   become_user: >-
     {{ apache_vhosts_vhost.post_script_become_user
        | default(apache_vhosts_defaults.post_script_become_user) }}
@@ -34,8 +52,8 @@
          | default("") }}
 
 - name: Apache_vhosts run post script with expect
-  expect:
-    command: "{{ apache_vhosts_post_script }}"
+  ansible.builtin.expect:
+    ansible.builtin.command: "{{ apache_vhosts_post_script }}"
     chdir: "{{ apache_vhosts_post_script_chdir }}"
     responses: >-
       {{ apache_vhosts_vhost.post_script_expect_responses

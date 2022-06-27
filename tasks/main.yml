@@ -1,9 +1,10 @@
 ---
 # Role tasks
 
-- block:
+- name: Setup apache virtual hosts
+  block:
     - name: Ensure virtual hosts config directories exists
-      file:
+      ansible.builtin.file:
         path: >-
           {{ apache_vhosts_vhost.directory
              | default(apache_vhosts_defaults.directory) }}
@@ -25,7 +26,7 @@
              | default(apache_vhosts_defaults.directory) }}
 
     - name: Setup virtual host config file
-      template:
+      ansible.builtin.template:
         src: "vhost_{{ apache_vhosts_vhost.template }}.conf.j2"
         dest: "{{ apache_vhost_vhost_path }}"
         owner: >-
@@ -46,10 +47,12 @@
              + "/"
              + apache_vhosts_vhost.file
                | default(apache_vhosts_defaults.file) }}
-      notify: run post script
+      notify: 
+        - httpd vhosts reload
+        - run post script
 
     - name: Remove virtual host config file
-      file:
+      ansible.builtin.file:
         path: "{{ apache_vhost_vhost_path }}"
         state: absent
       loop: "{{ apache_vhosts_to_remove }}"
@@ -61,7 +64,9 @@
              + "/"
              + apache_vhosts_vhost.file
                | default(apache_vhosts_defaults.file) }}
-      notify: run post script
+      notify: 
+        - httpd vhosts reload
+        - run post script
   vars:
     apache_vhosts_state_defined: >-
       {{ apache_vhosts_to_manage | selectattr("state", "defined") | list }}
@@ -101,6 +106,5 @@
          + "/"
          + apache_vhosts_vhost.file
            | default(apache_vhosts_defaults.file) }}
-
   tags:
     - role::apache_vhosts

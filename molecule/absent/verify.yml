@@ -5,7 +5,7 @@
   gather_facts: no
   tasks:
     - name: Check virtual hosts config files
-      stat:
+      ansible.builtin.stat:
         path: "{{ item }}"
       loop:
         - /etc/httpd/conf.ansible.d/myhost.conf
@@ -13,7 +13,7 @@
       register: check_config_files_result
 
     - name: Verify that virtual hosts config files does not exist
-      assert:
+      ansible.builtin.assert:
         that: >-
           {{ check_config_files_result.results
              | selectattr("stat.exists", "equalto", true)
