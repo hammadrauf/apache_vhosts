@@ -26,6 +26,7 @@ molecule_hosts:
       - server_name: example.domain.local
         file: myhost.conf
         template: redirect_to_ssl
+        reload_httpd: yes
         port: 80
 
       - server_name: example.domain.local

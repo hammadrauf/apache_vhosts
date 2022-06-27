@@ -41,6 +41,8 @@
 #    lbmethod: <method>               # Balancer method to use
 #    sticky_session: <sticky>         # Sticky session to use
 #
+#  custom_log: <path>                 # Path to the custom log file
+#  custom_log_format: <format>        # Format of the custom log file
 #  error_log: <path>                  # Path to the error log file
 #  post_script: <path>                # Path to a script to run after config
 #  post_script_chdir: d               # Directory to chdir to call post_script
@@ -51,6 +53,7 @@
 #                                     # the post script. See ansible expect
 #                                     # module documentation for details
 #  post_script_expect_timeout: <t>    # Timeout for the expect post script
+#  reload_httpd: <yes_no>             # Reload httpd after vhost change
 # }
 #
 # Available templates:
