@@ -6,11 +6,11 @@
     name: httpd
     state: reloaded
   when: >-
-    apache_vhosts_to_manage 
+    apache_vhosts_to_manage
     | selectattr("reload_httpd", "defined")
     | selectattr("reload_httpd", "equalto", true)
     | length > 0
-    or (apache_vhosts_to_manage 
+    or (apache_vhosts_to_manage
         | selectattr("reload_httpd", "undefined")
         | length > 0
         and apache_vhosts_defaults.reload_httpd | default(false))
@@ -53,7 +53,7 @@
 
 - name: Apache_vhosts run post script with expect
   ansible.builtin.expect:
-    ansible.builtin.command: "{{ apache_vhosts_post_script }}"
+    command: "{{ apache_vhosts_post_script }}"
     chdir: "{{ apache_vhosts_post_script_chdir }}"
     responses: >-
       {{ apache_vhosts_vhost.post_script_expect_responses
