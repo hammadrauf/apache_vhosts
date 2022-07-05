@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2022-07-05
+### Fixed
+- Fixed missing parameter on task to run post script with expect. Related to ansible/playbooks/project#94.
+
 ## [1.3.0] - 2022-06-27
 ### Added
 - Added `custom_log` variable
