@@ -41,8 +41,8 @@ dependencies:
   - role: amtega.select_hostvars
     vars:
       select_hostvars_query:
-        pattern: "^apache_vhosts_.*"
-        exclude_pattern: "^apache_vhosts_defaults$"
+        pattern: ^apache_vhosts_.*
+        exclude_pattern: ^apache_vhosts_defaults$
         fact_name: apache_vhosts_hostvars
         output_type: list
     when: apache_vhosts_load_modules_from_hostvars | bool

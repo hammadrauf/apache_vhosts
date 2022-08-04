@@ -27,7 +27,7 @@
 
     - name: Setup virtual host config file
       ansible.builtin.template:
-        src: "vhost_{{ apache_vhosts_vhost.template }}.conf.j2"
+        src: vhost_{{ apache_vhosts_vhost.template }}.conf.j2
         dest: "{{ apache_vhost_vhost_path }}"
         owner: >-
           {{ apache_vhosts_vhost.owner
@@ -47,7 +47,7 @@
              + "/"
              + apache_vhosts_vhost.file
                | default(apache_vhosts_defaults.file) }}
-      notify: 
+      notify:
         - httpd vhosts reload
         - run post script
 
@@ -64,7 +64,7 @@
              + "/"
              + apache_vhosts_vhost.file
                | default(apache_vhosts_defaults.file) }}
-      notify: 
+      notify:
         - httpd vhosts reload
         - run post script
   vars:
