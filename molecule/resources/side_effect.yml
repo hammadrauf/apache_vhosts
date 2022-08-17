@@ -1,5 +1,4 @@
 ---
-
 - name: Side effects
   hosts: molecule_hosts
   gather_facts: no

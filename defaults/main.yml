@@ -24,7 +24,7 @@
 #  redirect_match: <list>             # List of strings with redirect rules
 #  rewrite_engine: <yes_no>           # Enable or not rewrite engine
 #  rewrite_rules: <list>              # List of strings with rewrite rules
-#  locations:                         # List of dicts with the locations 
+#  locations:                         # List of dicts with the locations
 #    path: <path>                     # Path of the location
 #    proxy_pass: <list>               # See proxy_pass attribute below
 #    proxy_pass_reverse: <list>       # See proxy_pass_reverse attribute below
@@ -91,7 +91,6 @@
 #     state: present
 
 apache_vhosts: []
-
 # Dictionary with the defaults options to use if no other ones are specified in
 # the `apache_vhosts` variable. The members of the dict are the same attributes
 # of this variable.

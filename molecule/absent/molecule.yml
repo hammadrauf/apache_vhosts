@@ -1,19 +1,18 @@
 ---
-
 dependency:
   name: galaxy
   enabled: yes
   options:
     ignore-certs: yes
     ignore-errors: yes
-    role-file: "${MOLECULE_SCENARIO_DIRECTORY}/../resources/requirements.yml"
+    role-file: ${MOLECULE_SCENARIO_DIRECTORY}/../resources/requirements.yml
     requirements-file: >-
       ${MOLECULE_SCENARIO_DIRECTORY}/../resources/requirements.yml
 driver:
   name: podman
-lint: "${MOLECULE_SCENARIO_DIRECTORY}/../resources/linters.sh"
+lint: ${MOLECULE_SCENARIO_DIRECTORY}/../resources/linters.sh
 platforms:
-  - name: "centos7-${INSTANCE_UUID:-1}"
+  - name: centos7-${INSTANCE_UUID:-1}
     image: quay.io/centos/centos:centos7
     dockerfile: ../resources/Dockerfile.systemd.j2
     command: /sbin/init
@@ -24,7 +23,7 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
       - molecule_hosts
-  - name: "centos8-${INSTANCE_UUID:-1}"
+  - name: centos8-${INSTANCE_UUID:-1}
     image: quay.io/centos/centos:stream8
     dockerfile: ../resources/Dockerfile.systemd.j2
     command: /sbin/init
@@ -35,7 +34,7 @@ platforms:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
       - molecule_hosts
-  - name: "fedora34-${INSTANCE_UUID:-1}"
+  - name: fedora34-${INSTANCE_UUID:-1}
     image: quay.io/fedora/fedora:34
     dockerfile: ../resources/Dockerfile.systemd.j2
     command: /sbin/init
@@ -47,7 +46,7 @@ platforms:
     groups:
       - molecule_hosts
       - molecule_hosts_fedora
-  - name: "fedora35-${INSTANCE_UUID:-1}"
+  - name: fedora35-${INSTANCE_UUID:-1}
     image: quay.io/fedora/fedora:35
     dockerfile: ../resources/Dockerfile.systemd.j2
     command: /sbin/init

@@ -1,5 +1,4 @@
 ---
-
 - name: Cleanup
   hosts: molecule_hosts
   gather_facts: no
