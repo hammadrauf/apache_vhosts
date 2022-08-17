@@ -1,4 +1,7 @@
 ---
+
 exclude_paths:
-  - meta
   - molecule/resources/inventory.yml
+
+kinds:
+  - yaml: "**/molecule/**/requirements.yml"
