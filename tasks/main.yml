@@ -15,7 +15,7 @@
           {{ apache_vhosts_vhost.owner
              | default(apache_vhosts_defaults.owner) }}
         mode: >-
-          {{ apache_vhosts_vhost.mode
+          {{ apache_vhosts_vhost.dir_mode
              | default(apache_vhosts_defaults.dir_mode) }}
         state: directory
       loop: "{{ apache_vhosts_to_setup }}"
