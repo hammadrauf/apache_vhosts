@@ -4,6 +4,6 @@
 # Virtual hosts to manage
 
 apache_vhosts_to_manage: >-
-  {{ apache_vhosts
+  {{ apache_vhosts | default([])
      + ((apache_vhosts_load_modules_from_hostvars)
         | ternary(apache_vhosts_hostvars | default([]) | flatten, [])) }}

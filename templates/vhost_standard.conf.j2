@@ -107,7 +107,10 @@
   {{- "\n\n" -}}
   {{- "  " -}}CustomLog {{ apache_vhosts_vhost.custom_log | default(apache_vhosts_defaults.custom_log) }} {{ apache_vhosts_vhost.custom_log_format | default(apache_vhosts_defaults.custom_log_format) }}
 {%- endif -%}
-
+{%- if apache_vhosts_vhost.transfer_log | default(apache_vhosts_defaults.transfer_log) is defined -%}
+  {{- "\n\n" -}}
+  {{- "  " -}}TransferLog {{ apache_vhosts_vhost.transfer_log | default(apache_vhosts_defaults.transfer_log) }}
+{%- endif -%}
 {%- if apache_vhosts_vhost.error_log | default(apache_vhosts_defaults.error_log) is defined -%}
   {{- "\n\n" -}}
   {{- "  " -}}ErrorLog {{ apache_vhosts_vhost.error_log | default(apache_vhosts_defaults.error_log) }}
