@@ -2,7 +2,7 @@
 galaxy_info:
   role_name: apache_vhosts
   namespace: hammadrauf
-  author: José Enrique Mourón Regueira / Juan Antonio Valiño García / Hammad Rauf (Contributor/Modifications)
+  author: Hammad Rauf (Contributor/Modifications)
   description: Configure apache server virtual hosts. Fork from 'amtega.apache_vhosts'
   company: No Company
   license: GPLv3 or EUPL
