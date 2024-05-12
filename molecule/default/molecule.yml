@@ -19,6 +19,14 @@ platforms:
     tmpfs:
       - /run
       - /tmp
+    # tmpfs:
+    #   destination: "/run:rw"
+    #   size: "1024k"
+    #   mode: 0777
+    # tmpfs:
+    #   destination: "/tmp:rw"
+    #   size: "1024k"
+    #   mode: 0777
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
@@ -30,29 +38,53 @@ platforms:
     tmpfs:
       - /run
       - /tmp
+    # tmpfs:
+    #   destination: "/run:rw"
+    #   size: "1024k"
+    #   mode: 0777
+    # tmpfs:
+    #   destination: "/tmp:rw"
+    #   size: "1024k"
+    #   mode: 0777
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
       - molecule_hosts
-  - name: fedora34-${INSTANCE_UUID:-1}
-    image: quay.io/fedora/fedora:34
+  - name: fedora38-${INSTANCE_UUID:-1}
+    image: quay.io/fedora/fedora:38
     dockerfile: ../resources/Dockerfile.systemd.j2
     command: /sbin/init
     tmpfs:
       - /run
       - /tmp
+    # tmpfs:
+    #   destination: "/run:rw"
+    #   size: "1024k"
+    #   mode: 0777
+    # tmpfs:
+    #   destination: "/tmp:rw"
+    #   size: "1024k"
+    #   mode: 0777
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:
       - molecule_hosts
       - molecule_hosts_fedora
-  - name: fedora35-${INSTANCE_UUID:-1}
-    image: quay.io/fedora/fedora:35
+  - name: fedora39-${INSTANCE_UUID:-1}
+    image: quay.io/fedora/fedora:39
     dockerfile: ../resources/Dockerfile.systemd.j2
     command: /sbin/init
     tmpfs:
       - /run
       - /tmp
+    # tmpfs:
+    #   destination: "/run:rw"
+    #   size: "1024k"
+    #   mode: 0777
+    # tmpfs:
+    #   destination: "/tmp:rw"
+    #   size: "1024k"
+    #   mode: 0777
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
     groups:

@@ -1,6 +1,11 @@
-# Ansible apache_vhosts role
+# Ansible Role: apache_vhosts
 
 This is an [Ansible](http://www.ansible.com) role to configure apache server virtual hosts.
+This is a fork by [Hammad Rauf](https://www.linkedin.com/in/hammadrauf/) of the original at 
+[Ansible-Galaxy: apache_vhosts](https://galaxy.ansible.com/ui/standalone/roles/amtega/apache_vhosts/install/)
+or source repository at 
+[Github.com: apache_vhosts](https://github.com/amtega/ansible_role_apache_vhosts). This fork
+was done on May 11, 2024.
 
 ## Role Variables
 
@@ -88,3 +93,7 @@ This role is distributed in the hope that it will be useful, but WITHOUT ANY WAR
 
 - José Enrique Mourón Regueira
 - Juan Antonio Valiño García.
+
+## Fork Maintainer (Contributor) Information
+
+- Hammad Rauf

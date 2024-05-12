@@ -3,6 +3,6 @@
   hosts: molecule_hosts
   gather_facts: no
   roles:
-    - amtega.apache_vhosts
+    - hammadrauf.apache_vhosts
   vars:
     apache_vhosts_defaults_state: present

@@ -3,7 +3,7 @@
 default_stages:
   - commit
   - push
-exclude: LICENSE|CHANGELOG.md|\.gitlab/
+exclude: LICENSE|CHANGELOG.md
 repos:
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v2.29.3

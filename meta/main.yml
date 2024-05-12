@@ -1,10 +1,10 @@
 ---
 galaxy_info:
   role_name: apache_vhosts
-  namespace: amtega
-  author: José Enrique Mourón Regueira / Juan Antonio Valiño García
-  description: Configure apache server virtual hosts
-  company: AMTEGA - Xunta de Galicia
+  namespace: hammadrauf
+  author: José Enrique Mourón Regueira / Juan Antonio Valiño García / Hammad Rauf (Contributor/Modifications)
+  description: Configure apache server virtual hosts. Fork from 'amtega.apache_vhosts'
+  company: No Company
   license: GPLv3 or EUPL
   min_ansible_version: "2.10"
   platforms:
@@ -14,8 +14,8 @@ galaxy_info:
         - "8"
     - name: Fedora
       versions:
-        - "34"
-        - "35"
+        - "38"
+        - "39"
   galaxy_tags:
     - apache
     - httpd
@@ -27,9 +27,9 @@ dependencies:
   - role: amtega.check_platform
     vars:
       check_platform_distributions:
-        centos: 7
-        fedora: 34
-        redhat: 7
+        centos: latest #7
+        fedora: 38 #34
+        redhat: latest #7
 
   - role: amtega.packages
     vars:
