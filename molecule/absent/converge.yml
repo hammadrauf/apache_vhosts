@@ -2,7 +2,14 @@
 - name: Converge
   hosts: molecule_hosts
   gather_facts: no
-  roles:
-    - hammadrauf.apache_vhosts
-  vars:
-    apache_vhosts_defaults_state: absent
+  # roles:
+  #   - hammadrauf.apache_vhosts
+  # vars:
+  #   apache_vhosts_defaults_state: absent
+  tasks:
+    - name: Testing role
+      ansible.builtin.include_role:
+        name: hammadrauf.apache_vhosts
+        tasks_from: main.yml
+      vars:
+        apache_vhosts_defaults_state: absent
