@@ -27,9 +27,9 @@ dependencies:
   - role: amtega.check_platform
     vars:
       check_platform_distributions:
-        centos: latest #7
-        fedora: 38 #34
-        redhat: latest #7
+        centos: latest      #7
+        fedora: 38          #34
+        redhat: latest      #7
 
   - role: amtega.packages
     vars:
