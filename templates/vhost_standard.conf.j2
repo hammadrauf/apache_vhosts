@@ -1,8 +1,16 @@
 {{ ansible_managed | comment }}
 
 {{- "\n\n" -}}
+{%- if apache_vhosts_vhost.protocols is defined -%}
+  Protocols {{ apache_vhosts_vhost.protocols }}
+{%- endif -%}
+
 <VirtualHost {{ apache_vhosts_vhost.addr | default(apache_vhosts_defaults.addr) }}:{{ apache_vhosts_vhost.port | default(apache_vhosts_defaults.port) }}>
   ServerName {{ apache_vhosts_vhost.server_name | default(apache_vhosts_defaults.server_name) }}
+
+{%- if apache_vhosts_vhost.documentroot is defined -%}
+  DocumentRoot {{ apache_vhosts_vhost.documentroot }}
+{%- endif -%}
 
 {%- set includes = apache_vhosts_vhost.includes | default(apache_vhosts_defaults.includes) | default([]) -%}
 {%- if includes | length > 0 -%}
@@ -49,15 +57,47 @@
   {{- "  " -}}<Location {{ location.path }}>
   {%- for proxy in location.proxy_pass | default([]) -%}
   {{- "\n" -}}
-  {{- "    " -}}ProxyPass {{ proxy }}
+  {{- "    " -}}ProxyPass {{ location.proxy_pass }}
   {%- endfor -%}
   {%- for proxy in location.proxy_pass_reverse | default([]) -%}
   {{- "\n" -}}
-  {{- "    " -}}ProxyPassReverse {{ proxy }}
+  {{- "    " -}}ProxyPassReverse {{ location.proxy_pass_reverse }}
   {%- endfor -%}
+  {%- if location.order is defined -%}
+    Order {{ location.order }}
+    {{- "\n" -}}
+  {%- endif -%}
+  {%- if location.allow is defined -%}
+    Allow {{ location.allow }}
+    {{- "\n" -}}
+  {%- endif -%}
   {{- "\n" -}}
   {{- "  " -}}</Location>
 {%- endfor -%}
+
+{%- for proxy in apache_vhosts_vhost.proxies | default([]) -%}
+  {{- "\n\n" -}}
+  {{- "  " -}}<Proxy {{ proxy.path }}>
+  {%- for proxy in proxy.proxy_pass | default([]) -%}
+  {{- "\n" -}}
+  {{- "    " -}}ProxyPass {{ proxy.proxy_pass }}
+  {%- endfor -%}
+  {%- for proxy in proxy.proxy_pass_reverse | default([]) -%}
+  {{- "\n" -}}
+  {{- "    " -}}ProxyPassReverse {{ proxy.proxy_pass_reverse }}
+  {%- endfor -%}
+  {%- if proxy.order is defined -%}
+    Order {{ proxy.order }}
+    {{- "\n" -}}
+  {%- endif -%}
+  {%- if proxy.allow is defined -%}
+    Allow {{ proxy.allow }}
+    {{- "\n" -}}
+  {%- endif -%}
+  {{- "\n" -}}
+  {{- "  " -}}</Proxy>
+{%- endfor -%}
+
 
 {%- set proxies = apache_vhosts_vhost.proxy_pass | default(apache_vhosts_defaults.proxy_pass) | default([]) -%}
 {%- if proxies | length > 0 -%}
