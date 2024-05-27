@@ -131,6 +131,7 @@ apache_vhosts_defaults:
   proxy_preserve_host: yes
   rewrite_engine: yes
   state: present
+  custome_log_format: combined
 
 # Indicate `apache_vhosts` must be loaded also from host
 # variables. Any host variable that begins with "apache_vhosts_*"
