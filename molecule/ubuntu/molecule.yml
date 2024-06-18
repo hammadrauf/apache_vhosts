@@ -21,24 +21,24 @@ platforms:
   #   cgroupns_mode: host
   #   priviliged: true
   #   pre_build_image: true
-  # - name: geerlingubuntu
-  #   image: "docker.io/geerlingguy/docker-ubuntu2404-ansible:latest"
-  #   dockerfile: ../resources/Dockerfile.ubuntugeerling.j2
-  #   command: ""
-  #   volumes:
-  #     - /sys/fs/cgroup:/sys/fs/cgroup:rw
-  #   cgroupns_mode: host
-  #   priviliged: true
-  #   pre_build_image: true
-  - name: geerlingdebian
-    image: "docker.io/geerlingguy/docker-debian12-ansible:latest"
-    dockerfile: ../resources/Dockerfile.debiangeerling.j2
+  - name: geerlingubuntu
+    image: "docker.io/geerlingguy/docker-ubuntu2404-ansible:latest"
+    dockerfile: ../resources/Dockerfile.ubuntugeerling.j2
     command: ""
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
     cgroupns_mode: host
     priviliged: true
-    pre_build_image: true    
+    pre_build_image: true
+  # - name: geerlingdebian
+  #   image: "docker.io/geerlingguy/docker-debian12-ansible:latest"
+  #   dockerfile: ../resources/Dockerfile.debiangeerling.j2
+  #   command: ""
+  #   volumes:
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  #   cgroupns_mode: host
+  #   priviliged: true
+  #   pre_build_image: true    
 provisioner:
   name: ansible
   playbooks:

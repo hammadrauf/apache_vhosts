@@ -12,15 +12,15 @@ driver:
   name: podman
 lint: ${MOLECULE_SCENARIO_DIRECTORY}/../resources/linters.sh
 platforms:
-  # - name: geerlingrocky
-  #   image: "docker.io/geerlingguy/docker-rockylinux9-ansible:latest"
-  #   dockerfile: ../resources/Dockerfile.rockygeerling.j2
-  #   command: ""
-  #   volumes:
-  #     - /sys/fs/cgroup:/sys/fs/cgroup:rw
-  #   cgroupns_mode: host
-  #   priviliged: true
-  #   pre_build_image: true
+  - name: geerlingrocky
+    image: "docker.io/geerlingguy/docker-rockylinux9-ansible:latest"
+    dockerfile: ../resources/Dockerfile.rockygeerling.j2
+    command: ""
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    priviliged: true
+    pre_build_image: true
   # - name: geerlingubuntu
   #   image: "docker.io/geerlingguy/docker-ubuntu2404-ansible:latest"
   #   dockerfile: ../resources/Dockerfile.ubuntugeerling.j2
@@ -30,15 +30,15 @@ platforms:
   #   cgroupns_mode: host
   #   priviliged: true
   #   pre_build_image: true
-  - name: geerlingdebian
-    image: "docker.io/geerlingguy/docker-debian12-ansible:latest"
-    dockerfile: ../resources/Dockerfile.debiangeerling.j2
-    command: ""
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:rw
-    cgroupns_mode: host
-    priviliged: true
-    pre_build_image: true    
+  # - name: geerlingdebian
+  #   image: "docker.io/geerlingguy/docker-debian12-ansible:latest"
+  #   dockerfile: ../resources/Dockerfile.debiangeerling.j2
+  #   command: ""
+  #   volumes:
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  #   cgroupns_mode: host
+  #   priviliged: true
+  #   pre_build_image: true    
 provisioner:
   name: ansible
   playbooks:

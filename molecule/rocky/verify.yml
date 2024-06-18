@@ -1,0 +1,20 @@
+---
+- name: Verify
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Check virtual hosts config files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /etc/httpd/conf.ansible.d/myhost.conf
+        - /etc/httpd/conf.ansible.d/myhost_ssl.conf
+      register: check_config_files_result
+
+    - name: Verify that virtual hosts config files exist
+      ansible.builtin.assert:
+        that: >-
+          {{ check_config_files_result.results
+             | selectattr("stat.exists", "equalto", false)
+             | list
+             | length == 0 }}
