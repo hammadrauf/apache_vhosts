@@ -1,6 +1,10 @@
 ---
 
 molecule_hosts:
+  hosts:
+    rocky-geerling
+    ubuntu-geerling
+    debian-geerling
   vars:
     apache_vhosts_no_log: no
     apache_vhosts_defaults:

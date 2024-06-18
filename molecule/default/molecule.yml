@@ -12,92 +12,41 @@ driver:
   name: podman
 lint: ${MOLECULE_SCENARIO_DIRECTORY}/../resources/linters.sh
 platforms:
-  - name: centos7-${INSTANCE_UUID:-1}
-    image: quay.io/centos/centos:centos7
-    dockerfile: ../resources/Dockerfile.systemd.j2
-    command: /sbin/init
-    tmpfs:
-      - /run
-      - /tmp
-    # tmpfs:
-    #   destination: "/run:rw"
-    #   size: "1024k"
-    #   mode: 0777
-    # tmpfs:
-    #   destination: "/tmp:rw"
-    #   size: "1024k"
-    #   mode: 0777
+  - name: geerlingrocky
+    image: "docker.io/geerlingguy/docker-rockylinux9-ansible:latest"
+    dockerfile: ../resources/Dockerfile.rockygeerling.j2
+    command: ""
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    groups:
-      - molecule_hosts
-  - name: centos8-${INSTANCE_UUID:-1}
-    image: quay.io/centos/centos:stream8
-    dockerfile: ../resources/Dockerfile.systemd.j2
-    command: /sbin/init
-    tmpfs:
-      - /run
-      - /tmp
-    # tmpfs:
-    #   destination: "/run:rw"
-    #   size: "1024k"
-    #   mode: 0777
-    # tmpfs:
-    #   destination: "/tmp:rw"
-    #   size: "1024k"
-    #   mode: 0777
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    priviliged: true
+    pre_build_image: true
+  - name: geerlingubuntu
+    image: "docker.io/geerlingguy/docker-ubuntu2404-ansible:latest"
+    dockerfile: ../resources/Dockerfile.ubuntugeerling.j2
+    command: ""
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    groups:
-      - molecule_hosts
-  - name: fedora38-${INSTANCE_UUID:-1}
-    image: quay.io/fedora/fedora:38
-    dockerfile: ../resources/Dockerfile.systemd.j2
-    command: /sbin/init
-    tmpfs:
-      - /run
-      - /tmp
-    # tmpfs:
-    #   destination: "/run:rw"
-    #   size: "1024k"
-    #   mode: 0777
-    # tmpfs:
-    #   destination: "/tmp:rw"
-    #   size: "1024k"
-    #   mode: 0777
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    priviliged: true
+    pre_build_image: true
+  - name: geerlingdebian
+    image: "docker.io/geerlingguy/docker-debian12-ansible:latest"
+    dockerfile: ../resources/Dockerfile.debiangeerling.j2
+    command: ""
     volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    groups:
-      - molecule_hosts
-      - molecule_hosts_fedora
-  - name: fedora39-${INSTANCE_UUID:-1}
-    image: quay.io/fedora/fedora:39
-    dockerfile: ../resources/Dockerfile.systemd.j2
-    command: /sbin/init
-    tmpfs:
-      - /run
-      - /tmp
-    # tmpfs:
-    #   destination: "/run:rw"
-    #   size: "1024k"
-    #   mode: 0777
-    # tmpfs:
-    #   destination: "/tmp:rw"
-    #   size: "1024k"
-    #   mode: 0777
-    volumes:
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-    groups:
-      - molecule_hosts
-      - molecule_hosts_fedora
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
+    priviliged: true
+    pre_build_image: true    
 provisioner:
   name: ansible
   playbooks:
     prepare: ../resources/prepare.yml
     cleanup: ../resources/cleanup.yml
     side_effect: ../resources/side_effect.yml
-  inventory:
-    links:
-      hosts: ../resources/inventory.yml
+  # inventory:
+  #   links:
+  #     hosts: ../resources/inventory.yml
 verifier:
   name: ansible
