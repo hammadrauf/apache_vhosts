@@ -1,11 +1,61 @@
 ---
 - name: Converge
   hosts: localhost
-  gather_facts: no
+  gather_facts: yes
   roles:
     - hammadrauf.apache_vhosts
   vars:
     apache_vhosts_defaults_state: present
+    apache_vhosts_no_log: no
+    apache_vhosts_defaults:
+      directory: /etc/httpd/conf.ansible.d
+      owner: apache
+      group: apache
+      dir_mode: "0755"
+      file_mode: "0640"
+      addr: "*"
+      proxy_preserve_host: yes
+      rewrite_engine: yes
+      balancer:
+        name: tomcat-cluster
+        members:
+          - ajp://backend1.domain.local:8080 route=backend1-jvm
+          - ajp://backend2.domain.local:8080 route=backend2-jvm
+        lbmethod: byrequests
+        sticky_session: ROUTEID
+      error_log: /var/log/apache/my_error_log
+      state: "{{ apache_vhosts_defaults_state }}"
+
+    apache_vhosts:
+      - server_name: example.domain.local
+        file: myhost.conf
+        template: redirect_to_ssl
+        reload_httpd: yes
+        port: 80
+
+      - server_name: example.domain.local
+        file: myhost_ssl.conf
+        template: standard
+        port: 443
+        includes:
+          - /etc/httpd/ssl.conf
+        rewrite_rules:
+          - "^/$$ /myapp [R]"
+        locations:
+          - path: test
+            proxy_pass:
+              - /myapp balancer://tomcat-cluster/myapp
+            proxy_pass_reverse:
+              - /myapp balancer://tomcat-cluster/myapp
+        proxy_pass:
+          - /myapp balancer://tomcat-cluster/myapp
+        proxy_pass_reverse:
+          - /myapp balancer://tomcat-cluster/myapp
+        headers:
+          - >-
+            add Set-Cookie "ROUTEID=.%{BALANCER_WORKER_ROUTE}e;
+            path=/myapp" env=BALANCER_ROUTE_CHANGED
+
   tasks:
     - name: Testing role
       ansible.builtin.include_role:

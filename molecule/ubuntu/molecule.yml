@@ -50,3 +50,5 @@ provisioner:
   #     hosts: ../resources/inventory.yml
 verifier:
   name: ansible
+
+
