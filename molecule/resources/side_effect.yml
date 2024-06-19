@@ -1,4 +1,7 @@
 ---
 - name: Side effects
   hosts: localhost
+  #priviliged: true
+  become: yes
+  become_user: root
   gather_facts: no

@@ -2,6 +2,9 @@
 - name: Prepare
   hosts: localhost
   gather_facts: no
+  #priviliged: true
+  become: yes
+  become_user: root  
   tasks:
     # - name: Install required packages
     #   ansible.builtin.package:

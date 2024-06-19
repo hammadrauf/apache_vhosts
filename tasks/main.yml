@@ -108,3 +108,5 @@
            | default(apache_vhosts_defaults.file) }}
   tags:
     - role::apache_vhosts
+  become: yes
+  become_user: root

@@ -9,7 +9,7 @@ dependency:
     requirements-file: >-
       ${MOLECULE_SCENARIO_DIRECTORY}/../resources/requirements.yml
 driver:
-  name: podman
+  name: docker
 lint: ${MOLECULE_SCENARIO_DIRECTORY}/../resources/linters.sh
 platforms:
   - name: geerlingrocky
